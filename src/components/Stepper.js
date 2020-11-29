@@ -1,7 +1,18 @@
+// Package imports
 import React, { Component, Fragment } from "react";
 import css from "../styles/Stepper.module.css";
+import PropTypes from "prop-types";
+import shortid from "shortid";
+import { v4 as uuidv4 } from 'uuid';
 
 export default class Stepper extends Component {
+  static propTypes = {
+    currentStep: PropTypes.number.isRequired,
+    currentColor: PropTypes.string,
+    completedColor: PropTypes.string,
+    defaultColor: PropTypes.string,
+  };
+
   constructor(props) {
     super(props);
     console.log(this.props.initialStep);
@@ -13,11 +24,11 @@ export default class Stepper extends Component {
   getColor = (status) => {
     switch (status) {
       case "completed":
-        return "purple";
+        return this.props.completedColor ? this.props.completedColor : "purple";
       case "current":
-        return "green";
+        return this.props.currentColor ? this.props.currentColor : "orange";
       default:
-        return "gray";
+        return this.props.defaultColor ? this.props.defaultColor : "gray";
     }
   };
 
@@ -32,6 +43,11 @@ export default class Stepper extends Component {
         {this.props.steps.map((step, index) => (
           <Fragment>
             <Step
+              dafaultBGColor={
+                index + 1 === this.state.currentStep
+                  ? this.getColor("current")
+                  : this.getColor()
+              }
               color={
                 index < this.state.currentStep
                   ? this.getColor("completed")
@@ -39,7 +55,16 @@ export default class Stepper extends Component {
                   ? this.getColor("current")
                   : this.getColor()
               }
+              animated={
+                index === this.state.currentStep
+                  ? true
+                  : index === this.state.currentStep - 1
+                  ? true
+                  : false
+              }
+              key={uuidv4()}
               index={index}
+              isCurrent={index === this.state.currentStep ? true : false}
               handleClick={this.handleClick}
             >
               {step.title}{" "}
@@ -77,11 +102,11 @@ class Linkage extends Component {
             className={css.linkage}
           >
             <div
-            style={{
-              backgroundColor: this.props.backgroundColor,
-            }}
-            className={css.linkageAnimated}
-          ></div>
+              style={{
+                backgroundColor: this.props.backgroundColor,
+              }}
+              className={css.linkageAnimated}
+            ></div>
           </div>
         ) : (
           <div
@@ -99,18 +124,40 @@ class Linkage extends Component {
 class Step extends Component {
   render() {
     return (
-      <div
-        className={css.stepBody}
-        onClick={() => this.props.handleClick(this.props.index)}
-      >
-        <div
-          style={{ backgroundColor: this.props.color }}
-          className={css.stepCircle}
-        >
-          {this.props.index + 1}
-        </div>
-        {this.props.children}
-      </div>
+      <Fragment>
+        {this.props.animated ? (
+          <div
+            className={css.stepBody}
+            onClick={() => this.props.handleClick(this.props.index)}
+          >
+            <div
+              style={{ backgroundColor: this.props.dafaultBGColor }}
+              className={css.stepCircle}
+            >
+              <div className={css.textDiv}>{this.props.index + 1}</div>
+              <div
+                key={this.props.key}
+                style={{ backgroundColor: this.props.color, animationDelay: (this.props.isCurrent ? "0.7s":""), animationDuration: (this.props.isCurrent ? "0.5s":"1s") }}
+                className={css.stepCircleAnimate}
+              ></div>
+            </div>
+            {this.props.children}
+          </div>
+        ) : (
+          <div
+            className={css.stepBody}
+            onClick={() => this.props.handleClick(this.props.index)}
+          >
+            <div
+              style={{ backgroundColor: this.props.color }}
+              className={css.stepCircle}
+            >
+              {this.props.index + 1}
+            </div>
+            {this.props.children}
+          </div>
+        )}
+      </Fragment>
     );
   }
 }

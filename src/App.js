@@ -11,12 +11,23 @@ const steps = [
   {
     title: "Third step",
   },
+  {
+    title: "First step",
+  },
+  {
+    title: "Second step",
+  },
+  {
+    title: "Third step",
+  },
 ];
 
 function App() {
   return (
     <div className="App">
-      <Stepper steps={steps} initialStep={1} />
+      {/*initialStep={1} completedColor="black" currentColor="red" defaultColor="grey"*/}
+      <Stepper steps={steps} 
+      />
     </div>
   );
 }
