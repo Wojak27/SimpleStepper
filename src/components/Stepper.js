@@ -141,7 +141,9 @@ class Step extends Component {
                 className={css.stepCircleAnimate}
               ></div>
             </div>
+            <div className={css.stepperTitle}>
             {this.props.children}
+            </div>
           </div>
         ) : (
           <div
@@ -154,7 +156,9 @@ class Step extends Component {
             >
               {this.props.index + 1}
             </div>
+            <div className={css.stepperTitle}>
             {this.props.children}
+            </div>
           </div>
         )}
       </Fragment>
