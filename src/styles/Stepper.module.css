@@ -36,7 +36,22 @@
   margin-top: 22px;
   margin-right:6px;
   border-radius: 5px;
+  position: relative;
   /*clip-path: polygon(28% 46%, 70% 46%, 100% 30%, 100% 70%, 70% 58%, 26% 59%, 0% 70%, 0% 30%);*/
-  animation:
 
+}
+
+.linkageAnimated{
+  position: absolute;
+  width: 0;
+  height: 100%;
+  border-radius: 5px;
+  /*clip-path: polygon(28% 46%, 70% 46%, 100% 30%, 100% 70%, 70% 58%, 26% 59%, 0% 70%, 0% 30%);*/
+  animation: left-to-right 1s cubic-bezier(0, 1.1, 1, 1) forwards;
+}
+
+@keyframes left-to-right{
+  100%{
+    width: 100%;
+  }
 }

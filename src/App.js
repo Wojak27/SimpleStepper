@@ -11,21 +11,6 @@ const steps = [
   {
     title: "Third step",
   },
-  {
-    title: "Third step",
-  },
-  {
-    title: "Third step",
-  },
-  {
-    title: "Third step",
-  },
-  {
-    title: "Third step",
-  },
-  {
-    title: "Third step",
-  },
 ];
 
 function App() {

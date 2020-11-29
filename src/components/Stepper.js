@@ -44,16 +44,17 @@ export default class Stepper extends Component {
             >
               {step.title}{" "}
             </Step>
+            {/* This is for preventing the last link fall behind the circle */}
             {index !== this.props.steps.length - 1 ? (
-              <div
-                style={{
-                  backgroundColor:
-                    index < this.state.currentStep
-                      ? this.getColor("completed")
-                      : this.getColor(),
-                }}
-                className={css.linkage}
-              ></div>
+              <Linkage
+                backgroundColor={
+                  index < this.state.currentStep
+                    ? this.getColor("completed")
+                    : this.getColor()
+                }
+                defaultBGColor={this.getColor()}
+                animated={index + 1 === this.state.currentStep ? true : false}
+              />
             ) : (
               ""
             )}
@@ -64,15 +65,49 @@ export default class Stepper extends Component {
   }
 }
 
+class Linkage extends Component {
+  render() {
+    return (
+      <Fragment>
+        {this.props.animated ? (
+          <div
+            style={{
+              backgroundColor: this.props.defaultBGColor,
+            }}
+            className={css.linkage}
+          >
+            <div
+            style={{
+              backgroundColor: this.props.backgroundColor,
+            }}
+            className={css.linkageAnimated}
+          ></div>
+          </div>
+        ) : (
+          <div
+            style={{
+              backgroundColor: this.props.backgroundColor,
+            }}
+            className={css.linkage}
+          ></div>
+        )}
+      </Fragment>
+    );
+  }
+}
+
 class Step extends Component {
   render() {
     return (
-      <div className={css.stepBody} onClick={()=>this.props.handleClick(this.props.index)}>
+      <div
+        className={css.stepBody}
+        onClick={() => this.props.handleClick(this.props.index)}
+      >
         <div
           style={{ backgroundColor: this.props.color }}
           className={css.stepCircle}
         >
-          {this.props.index+1}
+          {this.props.index + 1}
         </div>
         {this.props.children}
       </div>
