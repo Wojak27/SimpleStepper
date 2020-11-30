@@ -1,10 +1,41 @@
+.stepperWrapper{
+  position:relative;
+  background-color:red;
+  width:100%;
+  height:100px;
+}
+
 .stepperBody{
   cursor:pointer;
   box-sizing: border-box; 
   display: flex;
   justify-content: space-between;
-  padding:30px;
+  padding-left:100px;
+  padding-right: 100px;
+  padding-top: 20px;
+  padding-bottom: 20px;
   width: 100%;
+  position: absolute;
+}
+
+.stepperBodyAnimatedForward {
+  cursor:pointer;
+  box-sizing: border-box; 
+  display: flex;
+  justify-content: space-between;
+  padding-left:100px;
+  padding-right: 100px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  width: 100%;
+  position: absolute;
+  left: 33%;
+  animation: transition-forward 1s ease forwards;
+}
+@keyframes transition-forward{
+  100%{
+    left: 0%
+  }
 }
 
 .stepBody{
@@ -15,14 +46,16 @@
   align-items: center;
   max-width: 100px;
   position: relative;
-  margin-left: 30px;
-  margin-right: 30px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .stepperTitle{
   position:absolute;
-  width: 200px;
+  width: 150px;
   bottom: 0;
+  left: -75px;
+  text-align: center;
 }
 .stepCircle{
   border-radius: 50%;
@@ -37,6 +70,7 @@
   opacity: 1;
   position: absolute;
   top:0;
+  z-index: 1;
 }
 
 .stepCircleAnimate{
@@ -53,9 +87,9 @@
   line-height: 50px;
   font-size:20px;
   opacity: 0;
-  animation: opacity 1s ease forwards;
+  animation: opacity-1 1s ease forwards;
 }
-@keyframes opacity{
+@keyframes opacity-1{
   100%{
     opacity: 1;
   }
@@ -74,21 +108,36 @@
   margin-right:6px;
   border-radius: 5px;
   position: relative;
-  /*clip-path: polygon(28% 46%, 70% 46%, 100% 30%, 100% 70%, 70% 58%, 26% 59%, 0% 70%, 0% 30%);*/
+  z-index:0;
 
 }
 
-.linkageAnimated{
+.linkageAnimatedRight{
   position: absolute;
   width: 0;
   height: 100%;
   border-radius: 5px;
-  /*clip-path: polygon(28% 46%, 70% 46%, 100% 30%, 100% 70%, 70% 58%, 26% 59%, 0% 70%, 0% 30%);*/
+  z-index: 1;
   animation: left-to-right 1s cubic-bezier(0, 0.89, 1, 1) forwards;
 }
 
 @keyframes left-to-right{
   100%{
     width: 100%;
+  }
+}
+
+.linkageAnimatedLeft{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  z-index: 1;
+  animation: right-to-left 1s cubic-bezier(0, 0.89, 1, 1) forwards;
+}
+
+@keyframes right-to-left{
+  100%{
+    width: 0;
   }
 }

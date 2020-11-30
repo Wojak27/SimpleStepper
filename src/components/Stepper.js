@@ -1,84 +1,94 @@
 // Package imports
-import React, { Component, Fragment } from "react";
+import React, {
+  Component,
+  Fragment,
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+} from "react";
 import css from "../styles/Stepper.module.css";
-import PropTypes from "prop-types";
-import shortid from "shortid";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
-export default class Stepper extends Component {
-  static propTypes = {
-    currentStep: PropTypes.number.isRequired,
-    currentColor: PropTypes.string,
-    completedColor: PropTypes.string,
-    defaultColor: PropTypes.string,
-  };
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
 
-  constructor(props) {
-    super(props);
-    console.log(this.props.initialStep);
-    this.state = {
-      currentStep: this.props.initialStep ? this.props.initialStep : 0,
-    };
-  }
+export default function Stepper(props) {
+  //const [isBackwards, setIsBackwards] = useState(false);
 
-  getColor = (status) => {
+  const getColor = (status) => {
     switch (status) {
       case "completed":
-        return this.props.completedColor ? this.props.completedColor : "purple";
+        return props.completedColor ? props.completedColor : "purple";
       case "current":
-        return this.props.currentColor ? this.props.currentColor : "orange";
+        return props.currentColor ? props.currentColor : "orange";
       default:
-        return this.props.defaultColor ? this.props.defaultColor : "gray";
+        return props.defaultColor ? props.defaultColor : "gray";
     }
   };
 
-  handleClick = (currentStep) => {
-    this.setState({
-      currentStep: currentStep,
-    });
-  };
-  render() {
-    return (
+  const handleClick = (currentStepState) => {};
+  return (
+    <div className={css.stepperWrapper}>
       <div className={css.stepperBody}>
-        {this.props.steps.map((step, index) => (
+        {props.steps.map((step, index) => (
           <Fragment>
             <Step
               dafaultBGColor={
-                index + 1 === this.state.currentStep
-                  ? this.getColor("current")
-                  : this.getColor()
+                index + 1 === props.currentStep && !props.isBackwards
+                  ? getColor("current")
+                  : index - 1 === props.currentStep && props.isBackwards
+                  ? getColor("current")
+                  : getColor()
               }
               color={
-                index < this.state.currentStep
-                  ? this.getColor("completed")
-                  : index === this.state.currentStep
-                  ? this.getColor("current")
-                  : this.getColor()
+                index < props.currentStep
+                  ? getColor("completed")
+                  : index === props.currentStep
+                  ? getColor("current")
+                  : getColor()
               }
               animated={
-                index === this.state.currentStep
+                index === props.currentStep && index !== 0
                   ? true
-                  : index === this.state.currentStep - 1
+                  : index + 1 === props.currentStep && !props.isBackwards
+                  ? true
+                  : index - 1 === props.currentStep && props.isBackwards
                   ? true
                   : false
               }
               key={uuidv4()}
               index={index}
-              isCurrent={index === this.state.currentStep ? true : false}
-              handleClick={this.handleClick}
+              isCurrent={index === props.currentStep ? true : false}
+              handleClick={handleClick}
             >
               {step.title}{" "}
             </Step>
             {/* This is for preventing the last link fall behind the circle */}
-            {index !== this.props.steps.length - 1 ? (
+            {index !== props.steps.length - 1 ? (
               <Linkage
+                key={uuidv4()}
+                isBackwards={props.isBackwards}
                 backgroundColor={
-                  index < this.state.currentStep
-                    ? this.getColor("completed")
-                    : this.getColor()
+                  index < props.currentStep
+                    ? getColor("completed")
+                    : index === props.currentStep && props.isBackwards
+                    ? getColor("completed")
+                    : getColor()
                 }
-                defaultBGColor={this.getColor()}
-                animated={index + 1 === this.state.currentStep ? true : false}
+                defaultBGColor={getColor()}
+                animated={
+                  index === props.currentStep && props.isBackwards
+                    ? true
+                    : index + 1 === props.currentStep && !props.isBackwards
+                    ? true
+                    : false
+                }
               />
             ) : (
               ""
@@ -86,15 +96,18 @@ export default class Stepper extends Component {
           </Fragment>
         ))}
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 class Linkage extends Component {
   render() {
+    console.log("animated is backwards");
+    console.log(`${this.props.animated} ${this.props.isBackwards}`);
+    console.log("");
     return (
       <Fragment>
-        {this.props.animated ? (
+        {this.props.animated && this.props.isBackwards ? (
           <div
             style={{
               backgroundColor: this.props.defaultBGColor,
@@ -102,10 +115,26 @@ class Linkage extends Component {
             className={css.linkage}
           >
             <div
+              key={this.props.key}
               style={{
                 backgroundColor: this.props.backgroundColor,
               }}
-              className={css.linkageAnimated}
+              className={css.linkageAnimatedLeft}
+            ></div>
+          </div>
+        ) : this.props.animated ? (
+          <div
+            style={{
+              backgroundColor: this.props.defaultBGColor,
+            }}
+            className={css.linkage}
+          >
+            <div
+              key={this.props.key}
+              style={{
+                backgroundColor: this.props.backgroundColor,
+              }}
+              className={css.linkageAnimatedRight}
             ></div>
           </div>
         ) : (
@@ -137,13 +166,15 @@ class Step extends Component {
               <div className={css.textDiv}>{this.props.index + 1}</div>
               <div
                 key={this.props.key}
-                style={{ backgroundColor: this.props.color, animationDelay: (this.props.isCurrent ? "0.7s":""), animationDuration: (this.props.isCurrent ? "0.5s":"1s") }}
+                style={{
+                  backgroundColor: this.props.color,
+                  animationDelay: this.props.isCurrent ? "0.7s" : "",
+                  animationDuration: this.props.isCurrent ? "0.5s" : "1s",
+                }}
                 className={css.stepCircleAnimate}
               ></div>
             </div>
-            <div className={css.stepperTitle}>
-            {this.props.children}
-            </div>
+            <div className={css.stepperTitle}>{this.props.children}</div>
           </div>
         ) : (
           <div
@@ -156,9 +187,7 @@ class Step extends Component {
             >
               {this.props.index + 1}
             </div>
-            <div className={css.stepperTitle}>
-            {this.props.children}
-            </div>
+            <div className={css.stepperTitle}>{this.props.children}</div>
           </div>
         )}
       </Fragment>

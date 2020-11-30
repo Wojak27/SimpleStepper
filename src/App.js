@@ -1,5 +1,7 @@
 import "./App.css";
 import Stepper from "./components/Stepper";
+import { Button } from "react-bootstrap";
+import { useState } from "react";
 
 const steps = [
   {
@@ -23,11 +25,33 @@ const steps = [
 ];
 
 function App() {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [isBackwards, setIsBackwards] = useState(false)
+  const goForward =()=>{
+    setCurrentStep(currentStep + 1);
+    setIsBackwards(false)
+  }
+
+  const goBackwards =()=>{
+    setCurrentStep(currentStep - 1);
+    setIsBackwards(true)
+  }
+
   return (
     <div className="App">
-      {/*initialStep={1} completedColor="black" currentColor="red" defaultColor="grey"*/}
-      <Stepper steps={steps} 
-      />
+      <Stepper steps={steps} currentStep={currentStep} isBackwards={isBackwards}/>
+      <Button
+        variant="danger"
+        onClick={goBackwards}
+      >
+        Previous
+      </Button>
+      <Button
+        variant="info"
+        onClick={goForward}
+      >
+        Next
+      </Button>
     </div>
   );
 }
